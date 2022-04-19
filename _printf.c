@@ -1,49 +1,47 @@
 #include "main.h"
 
 /**
- * _printf - print arguments according to a format
- * @format: a string composed of ordinary characters and format specifications
- *
- * Return: Upon success, this returns the number of characters printed.
- * If an output error is encountered, -1 is returned instead.
+ * _printf - produces output according to a format
+ * @format: format string containing the characters and the specifiers
+ * Description: this function will call the get_print() function that will
+ * determine which printing function to call depending on the conversion
+ * specifiers contained into fmt
+ * Return: length of the formatted output string
  */
 int _printf(const char *format, ...)
 {
+	int (*pfunc)(va_list, flags_t *);
+	const char *p;
 	va_list arguments;
-	int (*print_func)(va_list);
-	int charCounter, lastRetVal;
+	flags_t flags = {0, 0, 0};
 
-	if (!format)
-		return (-1);
+	register int count = 0;
 
 	va_start(arguments, format);
-	for (charCounter = 0; *format; ++format)
+	if (!format || (format[0] == '%' && !format[1]))
+		return (-1);
+	if (format[0] == '%' && format[1] == ' ' && !format[2])
+		return (-1);
+	for (p = format; *p; p++)
 	{
-		if (*format == '%')
+		if (*p == '%')
 		{
-			if (!format[1])
-				return (-1);
-
-			print_func = get_print_func(format[1]);
-			if (print_func)
+			p++;
+			if (*p == '%')
 			{
-				lastRetVal = print_func(arguments);
-				if (lastRetVal < 0)
-					return (-1);
-				charCounter += lastRetVal;
-				++format;
+				count += _putchar('%');
 				continue;
 			}
-			lastRetVal = _putchar(*format++);
-			if (lastRetVal < 0)
-				return (-1);
-			charCounter += lastRetVal;
-		}
-		lastRetVal = _putchar(*format);
-		if (lastRetVal < 0)
-			return (-1);
-		charCounter += lastRetVal;
+			while (get_flag(*p, &flags))
+				p++;
+			pfunc = get_print(*p);
+			count += (pfunc)
+				? pfunc(arguments, &flags)
+				: _printf("%%%c", *p);
+		} else
+			count += _putchar(*p);
 	}
+	_putchar(-1);
 	va_end(arguments);
-	return (charCounter);
+	return (count);
 }
