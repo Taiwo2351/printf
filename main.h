@@ -1,58 +1,42 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+#include <stdlib.h>
 #include <stdarg.h>
-#include <stdio.h>
 
 /**
- * struct print_func - map a print function to a conversion specifier
- * @specifier: the conversion specifier
- * @f: the function to call to format and print output
- */
-typedef struct print_func
+ * struct flag -flag object
+ * @letter: flag char
+ * @prnt: print function pointer
+ * Descriptions: contains flag letter and corresponding print function
+ **/
+typedef struct flag
 {
-	char specifier;
-	int (*f)(va_list);
-} t_print_func;
+	char letter;
+	int (*prnt)(va_list *);
+} find_flag;
 
+/* prototype for thr _printf() function */
 int _printf(const char *format, ...);
 
-int (*get_print_func(char c))(va_list);
+/* prototype for the print_function() function */
+int print_function(char c, va_list *args);
 
-int print_c(va_list);
+/* prototype for the p_string() function */
+int p_string(char *s);
 
-int print_s(va_list);
+/* prototype for the _write() function */
+int _write(char c);
+int p_int(int number);
+int exponent(int x, int y);
+int p_bin(unsigned int num);
 
-int print_prcnt(va_list);
+/* prototype for the print_string() function */
+int print_string(va_list *args);
 
-int print_i(va_list);
-void _print_i(int n, int *count);
+/* prototype for the print_char() function */
+int print_char(va_list *args);
+int print_int(va_list *args);
+int print_bin(va_list *args);
 
-int print_b(va_list);
-void _print_b(unsigned int n, int *count);
-
-int print_u(va_list);
-void _print_u(unsigned int n, int *count);
-
-int print_o(va_list);
-void _print_o(unsigned int n, int *count);
-
-int print_x(va_list);
-void _print_x(unsigned int n, int *count);
-
-int print_X(va_list);
-void _print_X(unsigned int n, int *count);
-
-int print_S(va_list args);
-
-int print_p(va_list);
-void _print_p(unsigned long int n, int *count);
-
-int print_rev(va_list);
-void _print_rev(char *s, int *count);
-
-int print_rot13(va_list);
-
-int _putchar(int c);
-
-#endif /* MAIN_H */
+#endif

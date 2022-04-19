@@ -1,50 +1,31 @@
 #include "main.h"
 
 /**
- * _printf - print arguments according to a format
- * @format: a string composed of ordinary characters and format specifications
- *
- * Return: Upon success, this returns the number of characters printed.
- * If an output error is encountered, -1 is returned instead.
+ * _printf - print string as printf
+ * @format: number of arguments
+ * Return: void
  */
 int _printf(const char *format, ...)
 {
-	va_list arguments;
-	int (*print_func)(va_list);
-	int charCounter, lastRetVal;
+va_list args;
+unsigned int s, result;
 
-	if (!format)
-		return (-1);
+	result = 0;
+	va_start(args, format);
 
-	va_start(arguments, format);
-	for (charCounter = 0; *format; ++format)
+	for (s = 0; format[s] != '\0'; s++)
 	{
-		if (*format == '%')
+		if (format[s] == '%')
 		{
-			if (!format[1])
-				return (-1);
-
-			print_func = get_print_func(format[1]);
-			if (print_func)
-			{
-				lastRetVal = print_func(arguments);
-				if (lastRetVal < 0)
-					return (-1);
-				charCounter += lastRetVal;
-				++format;
-				continue;
-			}
-			lastRetVal = _putchar(*format++);
-			if (lastRetVal < 0)
-				return (-1);
-			charCounter += lastRetVal;
+			result += print_function(format[s + 1], &args);
+			s++;
 		}
-		lastRetVal = _putchar(*format);
-		if (lastRetVal < 0)
-			return (-1);
-		charCounter += lastRetVal;
+	else
+		{
+			_write(format[s]);
+			result++;
+		}
 	}
-	va_end(arguments);
-	return (charCounter);
+	va_end(args);
+	return (result);
 }
-
